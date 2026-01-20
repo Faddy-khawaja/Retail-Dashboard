@@ -39,13 +39,7 @@ st.markdown("""
 # ---------------- LOAD DATA ----------------
 @st.cache_data
 def load_data():
-    try:
-        # Try to read from ZIP
-        df = pd.read_csv("Online_Retail (1).zip", encoding="ISO-8859-1", compression='zip')
-    except:
-        try:
-            # Try to read from CSV
-            df = pd.read_csv("Online_Retail (1).csv", encoding="ISO-
+    return pd.read_csv("Online_Retail (1).csv", encoding="ISO-8859-1")"ISO-
 
 df = load_data()
 df["Amount"] = df["Quantity"] * df["UnitPrice"]
