@@ -1,6 +1,29 @@
-import streamlit as st
-import pandas as pd
-import plotly.express as px
+import subprocess
+import sys
+
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# Plotly install karein agar nahi hai
+try:
+    import plotly.express as px
+except ImportError:
+    install("plotly")
+    import plotly.express as px
+
+# Streamlit install karein agar nahi hai
+try:
+    import streamlit as st
+except ImportError:
+    install("streamlit")
+    import streamlit as st
+
+# Pandas install karein agar nahi hai
+try:
+    import pandas as pd
+except ImportError:
+    install("pandas")
+    import pandas as pd
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
@@ -41,7 +64,7 @@ st.markdown("""
 def load_data():
     return pd.read_csv("Online_Retail (1).csv", encoding="ISO-8859-1")
 
-df = load_data()        
+df = load_data()
 df["Amount"] = df["Quantity"] * df["UnitPrice"]
 
 # ---------------- HEADER ----------------
