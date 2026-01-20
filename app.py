@@ -39,7 +39,7 @@ st.markdown("""
 # ---------------- LOAD DATA ----------------
 @st.cache_data
 def load_data():
-    return pd.read_csv("Online_Retail (1).csv", encoding="ISO-8859-1")"ISO-
+    return pd.read_csv("Online_Retail (1).csv", encoding="ISO-8859-1")
 
 df = load_data()
 df["Amount"] = df["Quantity"] * df["UnitPrice"]
@@ -153,4 +153,3 @@ elif page == "Insights":
 # ---------------- FOOTER ----------------
 st.markdown("---")
 st.markdown("🚀 Built with Streamlit | Faddy KJ Dark EDA Dashboard")
-
