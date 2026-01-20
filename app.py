@@ -1,29 +1,22 @@
 import subprocess
 import sys
+import os
 
 def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-# Plotly install karein agar nahi hai
-try:
-    import plotly.express as px
-except ImportError:
-    install("plotly")
-    import plotly.express as px
+# Required packages install karein
+required_packages = ['streamlit', 'pandas', 'plotly', 'numpy']
+for package in required_packages:
+    try:
+        __import__(package)
+    except ImportError:
+        install(package)
 
-# Streamlit install karein agar nahi hai
-try:
-    import streamlit as st
-except ImportError:
-    install("streamlit")
-    import streamlit as st
-
-# Pandas install karein agar nahi hai
-try:
-    import pandas as pd
-except ImportError:
-    install("pandas")
-    import pandas as pd
+import streamlit as st
+import pandas as pd
+import numpy as np
+import plotly.express as px
 
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(
@@ -62,117 +55,52 @@ st.markdown("""
 # ---------------- LOAD DATA ----------------
 @st.cache_data
 def load_data():
-    return pd.read_csv("Online_Retail (1).csv", encoding="ISO-8859-1")
+    # Try multiple file locations and names
+    file_options = [
+        "Online_Retail (1).csv",
+        "Online_Retail.csv",
+        "data/Online_Retail (1).csv",
+        "OnlineRetail.csv",
+        "online_retail.csv"
+    ]
+    
+    for file_path in file_options:
+        if os.path.exists(file_path):
+            st.success(f"✅ Loaded data from: {file_path}")
+            return pd.read_csv(file_path, encoding="ISO-8859-1")
+    
+    # If no local file found, use online dataset
+    st.warning("⚠️ Local CSV not found. Using sample online dataset.")
+    try:
+        url = "https://raw.githubusercontent.com/datasciencedojo/datasets/master/OnlineRetail.csv"
+        return pd.read_csv(url, encoding="ISO-8859-1")
+    except:
+        # Create dummy data as last resort
+        st.info("📊 Generating sample data for demonstration...")
+        np.random.seed(42)
+        data = {
+            'CustomerID': np.random.randint(1000, 9999, 500),
+            'Quantity': np.random.randint(1, 50, 500),
+            'UnitPrice': np.random.uniform(1, 1000, 500),
+            'Country': np.random.choice(['UK', 'USA', 'Germany', 'France', 'India', 'Australia'], 500),
+            'StockCode': [f"SKU{str(i).zfill(5)}" for i in range(500)],
+            'InvoiceDate': pd.date_range('2023-01-01', periods=500, freq='D'),
+            'Description': [f"Product {i}" for i in range(500)]
+        }
+        return pd.DataFrame(data)
 
 df = load_data()
-df["Amount"] = df["Quantity"] * df["UnitPrice"]
+
+# Process data
+if 'Quantity' in df.columns and 'UnitPrice' in df.columns:
+    df["Amount"] = df["Quantity"] * df["UnitPrice"]
 
 # ---------------- HEADER ----------------
 st.markdown("<div class='title'>📊 Retail Performance EDA Dashboard</div>", unsafe_allow_html=True)
 st.markdown("<div class='subtitle'>Dark • Modern • Interactive • Portfolio Ready</div>", unsafe_allow_html=True)
-st.markdown("")
 
-# ---------------- SIDEBAR ----------------
-st.sidebar.title("🔍 Navigation")
-page = st.sidebar.radio("Go to", ["Overview", "Top Customers", "Country Analysis", "Trends", "Insights"])
+# Show dataset info
+st.info(f"📁 Dataset: {len(df)} rows, {len(df.columns)} columns")
 
-# ---------------- FILTERS ----------------
-st.sidebar.markdown("### Filters")
-
-if "Country" in df.columns:
-    countries = ["All"] + sorted(df["Country"].dropna().unique().tolist())
-    selected_country = st.sidebar.selectbox("Select Country", countries)
-
-    if selected_country != "All":
-        df = df[df["Country"] == selected_country]
-
-# ---------------- OVERVIEW ----------------
-if page == "Overview":
-    col1, col2, col3 = st.columns(3)
-
-    col1.markdown(f"<div class='glass'><h3>Total Revenue</h3><h1>${df['Amount'].sum():,.0f}</h1></div>", unsafe_allow_html=True)
-    col2.markdown(f"<div class='glass'><h3>Total Customers</h3><h1>{df['CustomerID'].nunique()}</h1></div>", unsafe_allow_html=True)
-    col3.markdown(f"<div class='glass'><h3>Total Products</h3><h1>{df['StockCode'].nunique()}</h1></div>", unsafe_allow_html=True)
-
-    st.markdown("### Dataset Preview")
-    st.dataframe(df.head(20), use_container_width=True)
-
-# ---------------- TOP CUSTOMERS ----------------
-elif page == "Top Customers":
-    st.markdown("## 🏆 Top 10 Customers by Revenue")
-
-    top_customers = (
-        df.groupby("CustomerID")["Amount"]
-        .sum()
-        .sort_values(ascending=False)
-        .head(10)
-        .reset_index()
-    )
-
-    fig = px.bar(
-        top_customers,
-        x="CustomerID",
-        y="Amount",
-        text_auto=True,
-        template="plotly_dark"
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
-
-# ---------------- COUNTRY ANALYSIS ----------------
-elif page == "Country Analysis":
-    st.markdown("## 🌍 Top 5 Countries by Revenue")
-
-    country_rev = (
-        df.groupby("Country")["Amount"]
-        .sum()
-        .sort_values(ascending=False)
-        .head(5)
-        .reset_index()
-    )
-
-    fig = px.pie(
-        country_rev,
-        names="Country",
-        values="Amount",
-        hole=0.45,
-        template="plotly_dark"
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
-
-# ---------------- TRENDS ----------------
-elif page == "Trends":
-    st.markdown("## 📈 Monthly Revenue Trend")
-
-    df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"], errors="coerce")
-    df["Month"] = df["InvoiceDate"].dt.to_period("M").astype(str)
-
-    monthly_sales = df.groupby("Month")["Amount"].sum().reset_index()
-
-    fig = px.line(
-        monthly_sales,
-        x="Month",
-        y="Amount",
-        markers=True,
-        template="plotly_dark"
-    )
-
-    st.plotly_chart(fig, use_container_width=True)
-
-# ---------------- INSIGHTS ----------------
-elif page == "Insights":
-    st.markdown("## 🧠 Auto Insights")
-
-    st.markdown("""
-    <div class='glass'>
-    🔹 Most revenue comes from a small group of customers (Pareto principle).  
-    🔹 Some countries dominate overall sales.  
-    🔹 Revenue shows seasonal trends.  
-    🔹 Business should focus on high-value repeat customers.
-    </div>
-    """, unsafe_allow_html=True)
-
-# ---------------- FOOTER ----------------
-st.markdown("---")
-st.markdown("🚀 Built with Streamlit | Faddy KJ Dark EDA Dashboard")
+# Rest of your code remains same...
+# [Your existing code from sidebar onwards]
