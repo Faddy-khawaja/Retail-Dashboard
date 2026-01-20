@@ -1,39 +1,48 @@
 # 📊 Retail Performance EDA Dashboard
 
-A modern, interactive Streamlit dashboard for exploring retail sales data with dark theme and portfolio-ready design.
+A modern, interactive dashboard built with Streamlit for exploring retail transaction data with a dark theme aesthetic.
 
-![Dashboard Preview](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge&logo=python)
-![Pandas](https://img.shields.io/badge/Pandas-2.0+-blue?style=for-the-badge&logo=pandas)
-![Plotly](https://img.shields.io/badge/Plotly-5.0+-blue?style=for-the-badge&logo=plotly)
+## 🚀 Features
 
-## 🚀 Live Demo
-**[👉 Click here to view the live dashboard](https://retail-dashboard-fkj.streamlit.app/)**
+- **Modern Dark Theme**: Gradient background with glass-morphism effect
+- **Interactive Visualizations**: Plotly charts with dark theme
+- **Multi-Page Navigation**: Five different analysis pages
+- **Data Filtering**: Filter by country
+- **Performance Metrics**: Key business metrics at a glance
+- **Cached Data Loading**: Efficient data handling with Streamlit caching
 
-## ✨ Features
+## 📋 Pages Overview
 
-- **📈 Interactive Visualizations**: Plotly charts for dynamic data exploration
-- **🌙 Dark Modern UI**: Glass-morphism design with gradient effects
-- **🌍 Multi-page Navigation**: 
-  - Overview Dashboard
-  - Top Customers Analysis
-  - Country-wise Performance
-  - Sales Trends Over Time
-  - Automated Insights
-- **🔍 Smart Filtering**: Filter data by country
-- **📱 Responsive Design**: Works on desktop and mobile
+### 1. **Overview**
+- Total revenue, customer count, and product count
+- Dataset preview
+- High-level KPIs
 
-## 📸 Dashboard Preview
+### 2. **Top Customers** 🏆
+- Top 10 customers by revenue
+- Interactive bar chart
 
-![Dashboard Screenshot](https://via.placeholder.com/800x450/0f172a/ffffff?text=Retail+Performance+Dashboard)
+### 3. **Country Analysis** 🌍
+- Top 5 countries by revenue
+- Interactive pie chart with donut hole
 
-## 🛠️ Installation & Local Setup
+### 4. **Trends** 📈
+- Monthly revenue trend
+- Time series line chart
 
-### Prerequisites
-- Python 3.9 or higher
-- pip package manager
+### 5. **Insights** 🧠
+- Auto-generated business insights
+- Key takeaways for decision making
 
-### Step 1: Clone the repository
-```bash
-git clone https://github.com/faddy-khawaja/retail-dashboard.git
-cd retail-dashboard
+## 🛠️ Tech Stack
+
+- **Streamlit** - Web application framework
+- **Pandas** - Data manipulation and analysis
+- **Plotly Express** - Interactive visualizations
+- **Python 3.8+** - Backend programming
+
+## 🚦 Quick Start
+
+1. **Install dependencies:**
+   ```bash
+   pip install streamlit pandas plotly
