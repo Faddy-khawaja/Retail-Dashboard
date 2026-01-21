@@ -39,7 +39,7 @@ st.markdown("""
 # ---------------- LOAD DATA ----------------
 @st.cache_data
 def load_data():
-    return pd.read_csv("online_Retail.csv", encoding="ISO-8859-1")
+    return pd.read_csv("Online_Retail (1).zip", encoding="ISO-8859-1")
 
 df = load_data()
 df["Amount"] = df["Quantity"] * df["UnitPrice"]
